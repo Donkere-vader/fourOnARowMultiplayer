@@ -85,7 +85,11 @@ class Game():
         except ValueError:
             messagebox.showerror('ERROR','Invalid game code')
             return
-        req = requests.post(f'{self.url}/join/')
+        try:
+            req = requests.post(f'{self.url}/join/')
+        except:
+            messagebox.showerror('Error', "Game not found")
+            return
         if req.text != 'false':
             self.player_num = int(req.text)
             if self.player_num == 1:
@@ -103,10 +107,10 @@ class Game():
             if self.game_data['winner']:
                 self.draw()
                 messagebox.showinfo('Winner', 'You won!!' if self.game_data['winner'] == self.player_num else 'You lost..')
-                exit()
-            self.my_turn = True
+            if self.game_data['on_turn'] == self.player_num:
+                self.my_turn = True
             self.draw()
-            return
+        root.after(1000, self.update)
 
     def draw(self):
         clear_screen()
@@ -154,7 +158,7 @@ class Game():
         for x in range(len(self.tiles)+1):
             Button(
                 master=btn_frame,
-                text="\/",
+                text="\\/",
                 font='arial 15',
                 width=3,
                 border=1,
@@ -163,24 +167,25 @@ class Game():
                 command= lambda column=x: self.do_turn(column)
             ).grid(row=0, column=x)
 
-        Button(
-            text="refresh",
-            command= lambda: self.update()
-        ).grid()
+        #Button(
+        #    text="refresh",
+        #    command= lambda: self.update()
+        #).grid()
 
 
     def do_turn(self, column):
-        data = {"player":self.player_num,"column":column}
-        req = requests.post(f'{self.url}/user_move/', data=data)
-        if req.text != 'false':
-            self.my_turn = False
-            self.update()
+        if game.my_turn:
+                data = {"player":self.player_num,"column":column}
+                req = requests.post(f'{self.url}/user_move/', data=data)
+                if req.text != 'false':
+                    self.my_turn = False
+                    self.update()
 
     def host_game(self):
-        os.system(f'start {self.url}')
+        messagebox.showinfo("Hosting a game","To host a game run the hoster script")
 
 root = Tk()
-root.title("Four on a row")
+root.title("Four in a row")
 
 game = Game()
 root.mainloop()
