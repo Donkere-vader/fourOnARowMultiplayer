@@ -130,6 +130,13 @@ class Game():
                 font='arial 15'
             ).grid()
 
+        player_symbol = "X" if self.player_num == 1 else "O"
+
+        Label(
+            text=f"Playing as: {player_symbol}",
+            font='arial 15'
+        ).grid()
+
         field_frame = Frame()
         field_frame.grid()
         for y, row in enumerate(self.tiles):
