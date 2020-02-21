@@ -1,5 +1,5 @@
 from flask import Flask, request
-import os, json
+import os, json, socket
 
 GAME_CODE = int(input('Game port: '))
 
@@ -93,9 +93,9 @@ def player_joines():
     return str(player)
 
 def host_start():
-    print("** HOSTING **")
-    print(f"#> URL: ") #TODO GET URL
-    print(f"#> GAME PORT: {GAME_CODE}")
+    print("\n\n** HOSTING **")
+    print(f"[+] URL: {socket.gethostbyname(socket.gethostname())}") #TODO GET URL
+    print(f"[+] GAME PORT: {GAME_CODE}\n\n\n")
     app.run(host="0.0.0.0", port=GAME_CODE)
 
 host_start()
